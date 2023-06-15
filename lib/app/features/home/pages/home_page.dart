@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/material.dart';
+import 'package:offline_videos_poc/app/features/home/models/offline_video_model.dart';
 import 'package:offline_videos_poc/app/features/home/pages/offline_videos_page.dart';
 import 'package:offline_videos_poc/app/features/home/repositories/videos_to_download_repository.dart';
 
@@ -21,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Title'),
+        title: const Text('Videos to download'),
         actions: [
           ElevatedButton(
             child: const Text('Videos'),
@@ -68,6 +69,8 @@ class _HomePageState extends State<HomePage> {
                             } else {
                               final filePath = await result.task.filePath();
                               log(filePath, name: 'File Path');
+                              final offlineVideo = OfflineVideoModel(path: filePath, id: DateTime.now().toString(), title: task.filename, url: '');
+                              await repository.saveVideo(offlineVideo);
                             }
                           } catch (e) {
                             error = e.toString();

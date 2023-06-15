@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
+import 'package:offline_videos_poc/app/features/home/pages/watch_offline_video_page.dart';
+import 'package:offline_videos_poc/app/features/home/repositories/downloaded_videos_repository.dart';
 
 class OfflineVideosPage extends StatefulWidget {
   const OfflineVideosPage({super.key});
@@ -11,29 +10,49 @@ class OfflineVideosPage extends StatefulWidget {
 }
 
 class _OfflineVideosPageState extends State<OfflineVideosPage> {
-  final controller = VideoPlayerController.file(File('/data/user/0/com.example.offline_videos_poc/app_flutter/bee (2).mp4'));
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    controller.initialize().then((value) {
-      setState(() {});
-      controller.play();
-    });
-    super.didChangeDependencies();
-  }
+  final repository = DownloadedVideosRepository();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Title'),
+        title: const Text('Downloads'),
       ),
-      body: SizedBox(height: 200, child: VideoPlayer(controller)),
+      body: FutureBuilder(
+        future: repository.getOfflineVideos(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(),
+            );
+          }
+          final data = snapshot.data;
+          if (data == null || data.isEmpty) {
+            return const Center(child: Text('Vazio'));
+          }
+          return ListView.builder(
+            itemCount: data.length,
+            itemBuilder: (context, index) {
+              return InkWell(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => WatchOfflineVideoPage(path: data[index].path),
+                  ),
+                ),
+                child: SizedBox(
+                  height: 200,
+                  child: ListTile(
+                    leading: Text('ID: ${data[index].id}'),
+                    title: Text('Title: ${data[index].title}'),
+                    subtitle: Text('Path: ${data[index].path}'),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

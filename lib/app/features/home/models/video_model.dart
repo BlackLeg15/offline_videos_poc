@@ -5,16 +5,16 @@ class VideoModel {
   final String id;
   final String title;
   final String url;
-  final VideoType type;
+  //final VideoType type;
 
-  const VideoModel({required this.id, required this.title, required this.url, required this.type});
+  const VideoModel({required this.id, required this.title, required this.url, /*required this.type*/});
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
       'title': title,
       'url': url,
-      'type': type.name,
+      //'type': type.name,
     };
   }
 
@@ -23,7 +23,7 @@ class VideoModel {
       id: map['id'] as String,
       title: map['title'] as String,
       url: map['url'] as String,
-      type: VideoType.values.firstWhere((element) => element.name == map['type'] as String),
+      //type: VideoType.values.firstWhere((element) => element.name == map['type'] as String),
     );
   }
 
@@ -35,13 +35,13 @@ class VideoModel {
     String? id,
     String? title,
     String? url,
-    VideoType? type,
+    //VideoType? type,
   }) {
     return VideoModel(
       id: id ?? this.id,
       title: title ?? this.title,
       url: url ?? this.url,
-      type: type ?? this.type,
+      //type: type ?? this.type,
     );
   }
 
@@ -52,16 +52,18 @@ class VideoModel {
     return 
       other.id == id &&
       other.title == title &&
-      other.url == url &&
-      other.type == type;
+      other.url == url /*&&
+      other.type == type*/
+      ;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
       title.hashCode ^
-      url.hashCode ^
-      type.hashCode;
+      url.hashCode/* ^
+      type.hashCode*/
+      ;
   }
 }
 

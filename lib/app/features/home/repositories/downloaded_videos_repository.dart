@@ -1,17 +1,14 @@
-import 'dart:developer';
+import 'package:offline_videos_poc/app/features/home/models/offline_video_model.dart';
 
-import 'package:background_downloader/background_downloader.dart';
+import '../services/storage/hive_storage_imp.dart';
 
-class VideosToDownloadRepository {
+class DownloadedVideosRepository {
   final videos = ['https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'];
 
-  Future<void> downloadVideo(String url) async {
-    final task = await DownloadTask(url: url).withSuggestedFilename(unique: true);
-    final result = await FileDownloader().download(task);
-    final filePath = await result.task.filePath();
-    log(filePath, name: 'File path');
-    //Com o filePath, salva o registro do vídeo com o Hive
-    //Resgata posteriormente
-    //gg
+  Future<List<OfflineVideoModel>> getOfflineVideos() async {
+    final hive = await HiveStorageService.getInstance(boxName: 'videos');
+    final box = await hive.boxCompleter.future;
+    final values = box.values.toList().cast<String>();
+    return List.generate(values.length, (index) => OfflineVideoModel.fromJson(values[index]));
   }
 }
