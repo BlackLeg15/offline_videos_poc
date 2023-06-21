@@ -1,10 +1,10 @@
 name: offline_videos_poc
 description: A new Flutter project.
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=3.0.3 <4.0.0'
+  sdk: ">=3.0.3 <4.0.0"
 
 dependencies:
   background_downloader: ^7.4.0
@@ -13,6 +13,11 @@ dependencies:
   flutter:
     sdk: flutter
   path_provider: ^2.0.15
+  m3u:
+    git:
+      url: https://github.com/bmoliveira/m3u-parse-utils
+  flutter_tencentplayer: ^2.0.1
+  flutter_hls_parser: ^2.0.1
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +26,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+    - assets/
