@@ -30,10 +30,16 @@ class _WatchOfflineVideoPageState extends State<WatchOfflineVideoPage> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Enjoy the video'),
+        title: const Text('Aproveite o vídeo'),
       ),
       body: SizedBox(height: 200, child: VideoPlayer(controller)),
     );

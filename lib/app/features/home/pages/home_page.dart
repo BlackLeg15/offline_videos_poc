@@ -22,10 +22,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Videos to download'),
+        title: const Text('Vídeos para baixar'),
         actions: [
           ElevatedButton(
-            child: const Text('Videos'),
+            child: const Text('Vídeos'),
             onPressed: () {
               Navigator.push(
                 context,
@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                Text(repository.videos[index].title),
                 ElevatedButton(
                   onPressed: isLoading
                       ? null
@@ -51,29 +52,22 @@ class _HomePageState extends State<HomePage> {
                           setState(() {
                             isLoading = true;
                           });
+                          OfflineVideoModel? offlineVideoModel;
                           try {
-                            final task = await DownloadTask(
-                              url: repository.videos[index],
-                            ).withSuggestedFilename(unique: true);
-                            final result = await FileDownloader().download(
-                              task,
-                              onProgress: (progress) {
-                                log(progress.toString(), name: 'Download Progress');
-                              },
-                            );
-                            final resultException = result.exception;
-                            if (resultException != null) {
-                              setState(() {
-                                error = resultException.description;
-                              });
-                            } else {
-                              final filePath = await result.task.filePath();
-                              log(filePath, name: 'File Path');
-                              final offlineVideo = OfflineVideoModel(path: filePath, id: DateTime.now().toString(), title: task.filename, url: '');
-                              await repository.saveVideo(offlineVideo);
-                            }
+                            offlineVideoModel = await downloadVideoByIndex(index);
                           } catch (e) {
-                            error = e.toString();
+                            log(e.toString(), name: 'Download Task\'s exception');
+                          }
+                          if (offlineVideoModel == null) {
+                            setState(() {
+                              isLoading = false;
+                            });
+                            return;
+                          }
+                          try {
+                            await repository.saveVideo(offlineVideoModel);
+                          } catch (e) {
+                            log(e.toString(), name: 'Save Task\'s exception');
                           }
                           setState(() {
                             isLoading = false;
@@ -85,5 +79,38 @@ class _HomePageState extends State<HomePage> {
             );
           }),
     );
+  }
+
+  Future<OfflineVideoModel?> downloadVideoByIndex(int index) async {
+    OfflineVideoModel? offlineVideoModel;
+    try {
+      final task = await DownloadTask(
+        url: repository.videos[index].url,
+      ).withSuggestedFilename(unique: true);
+
+      final result = await FileDownloader().download(
+        task,
+        onProgress: (progress) {
+          log(progress.toString(), name: 'Download Progress');
+        },
+      );
+
+      final resultException = result.exception;
+      if (resultException != null) {
+        log(resultException.description, name: 'Download Task\'s Result Exception');
+      } else {
+        final filePath = await result.task.filePath();
+        log(filePath, name: 'File Path');
+        offlineVideoModel = OfflineVideoModel(
+          path: filePath,
+          id: repository.videos[index].id,
+          title: repository.videos[index].title,
+          url: repository.videos[index].url,
+        );
+      }
+    } catch (e) {
+      log(e.toString(), name: 'Download Task\'s Exception');
+    }
+    return offlineVideoModel;
   }
 }

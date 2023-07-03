@@ -1,7 +1,6 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:offline_videos_poc/app/features/home/models/video_model.dart';
+import 'video_model.dart';
 
 class OfflineVideoModel extends VideoModel {
   final String path;
@@ -10,12 +9,9 @@ class OfflineVideoModel extends VideoModel {
 
   @override
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'id': id,
-      'title': title,
-      'url': url,
-      'path': path,
-    };
+    final superMap = super.toMap();
+    final offlineMap = superMap..addAll({'path': path});
+    return offlineMap;
   }
 
   factory OfflineVideoModel.fromMap(Map<String, dynamic> map) {
@@ -27,10 +23,5 @@ class OfflineVideoModel extends VideoModel {
     );
   }
 
-  @override
-  String toJson() => json.encode(toMap());
-
   factory OfflineVideoModel.fromJson(String source) => OfflineVideoModel.fromMap(json.decode(source) as Map<String, dynamic>);
 }
-
-enum VideoType { network, file }

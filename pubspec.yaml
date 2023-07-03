@@ -7,8 +7,8 @@ environment:
   sdk: '>=3.0.3 <4.0.0'
 
 dependencies:
-  background_downloader: ^7.4.0
-  video_player: ^2.6.1
+  background_downloader: ^7.4.1
+  video_player: ^2.7.0
   hive_flutter: ^1.1.0
   flutter:
     sdk: flutter
@@ -17,7 +17,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.2
 
 flutter:
   uses-material-design: true
